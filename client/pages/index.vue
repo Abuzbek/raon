@@ -12,10 +12,10 @@
     </swiper>
     <div class="swiper-pagination swiperPag" slot="pagination"></div>
   </header>
-  <v-container>
+  <v-container class="pt-15">
     <h1 class="text-center">BEST SELLER</h1>
      <v-row>
-    <v-col v-for="n in 12" :key="n" cols="6" xl="2" lg="3" md="4">
+    <v-col v-for="n in products" :key="n" cols="6" xl="2" lg="3" md="4">
       <v-card
         class="mx-auto"
       >
@@ -23,21 +23,22 @@
           v-ripple="{class: 'warning--text'}"
           class="white--text align-end"
           height="200px"
-          src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+          :src="n.img"
         >
         </v-img>
         <v-card-subtitle class="pb-0">
           Number 10
         </v-card-subtitle>
-
         <v-card-text class="text--primary pb-2">
-          <div>Whitehaven Beach</div>
+          <div>{{n.name}}</div>
           <v-row>
-            <v-col v-if="n.sale" cols="12" md="6">
+            <v-col class="pt-1 pb-1" v-if="n.sale" cols="12" md="auto">
               {{n.sale}}
             </v-col>
-            <v-col class="pt-1 pb-1" cols="12" md="6">
-              193,000  
+            <v-col class="pt-1 pb-1" cols="12" md="auto">
+              <div :class="{'line': n.sale}">
+                {{n.price}}
+              </div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -45,23 +46,15 @@
         <v-card-actions>
           <v-btn
             color="warning"
-            text
+            @click="pushId(n._id)"
           >
-            Share
-          </v-btn>
-
-          <v-btn
-            color="warning"
-            text
-          >
-            Explore
+            В корзину
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
   </v-row>
   </v-container>
- 
 </div>
 </template>
 
@@ -82,7 +75,9 @@ export default {
           clickable: true,
         },
         // Some Swiper option/callback...
-      }
+      },
+      products:'',
+      clickedId: false
     }
   },
   components: {
@@ -91,14 +86,34 @@ export default {
   },
   directives: {
     swiper: directive
+  },
+  async asyncData({$axios}){
+    const product = await $axios.$get('http://localhost:8080/api/product')
+    return {product}
+  },
+  mounted(){
+    this.products = this.product
+  },
+  methods:{
+    pushId(id){
+      if(this.clickedId){
+        this.$axios.$post('http://localhost:8080/api/product/delete', {id: id})
+      }
+      else{
+        this.$axios.$post('http://localhost:8080/api/product', {id: id})
+      }
+      this.clickedId = !this.clickedId
+      $emit()
+    }
   }
+
 }
 </script>
 
 <style lang="scss">
 .swiperSlide{
   width: 100%;
-  height: 600px;
+  height: 90vh;
 }
 header{
   position: relative;
@@ -128,5 +143,9 @@ header{
       
     }
   }
+}
+.line{
+  color: gray;
+  text-decoration: line-through;
 }
 </style>

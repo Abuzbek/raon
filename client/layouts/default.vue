@@ -25,20 +25,31 @@
         :key="i"
       >
       <template v-slot:activator="{ attrs, on }">
-        <v-btn
-          v-bind="attrs"
-          v-on="on"
-          text
-          class="btn_text"
-          active-class="btn_text_active"
+        <v-badge
+          :content="22"
+          :value="22"
+          :color="n.icon ? 'warning' : 'transparent'"
+          overlap
         >
-          {{ n.title }}
-          <v-icon right v-if="n.item">
-            mdi-chevron-down
-          </v-icon>
-        </v-btn>
+          <v-btn
+            v-bind="attrs"
+            v-on="on"
+            text
+            class="btn_text"
+            active-class="btn_text_active"
+          >
+            {{ n.title }}
+            <v-icon right v-if="n.item">
+              mdi-chevron-down
+            </v-icon>
+            
+            <v-icon right v-if="n.icon">
+              {{n.icon}}
+            </v-icon>
+          </v-btn>
+        </v-badge>
       </template>
-      <v-list>
+      <v-list v-if="n.item">
         <router-link class="itemHref" to="#!"
         v-for="(n, i) in n.item"
           :key="i">
@@ -97,7 +108,8 @@ export default {
           ]
         },
         {
-          title:'Aккаунт'
+          title:'Aккаунт',
+          icon:'mdi-cart'
         }
       ]
     }

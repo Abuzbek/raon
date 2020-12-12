@@ -1,22 +1,22 @@
 {
-  "name": "korea-rao",
-  "version": "1.0.0",
+  "name": "server",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate"
+    "start": "node ./server/bin/www",
+    "dev":"nodemon ./server/bin/www"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.12.3",
-    "@nuxtjs/pwa": "^3.0.2",
-    "core-js": "^3.6.5",
-    "nuxt": "^2.14.6",
-    "swiper": "^6.4.1",
-    "vue-awesome-swiper": "^4.1.1"
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "less-middleware": "~2.2.1",
+    "morgan": "~1.9.1",
+    "pug": "2.0.0-beta11"
   },
   "devDependencies": {
-    "@nuxtjs/vuetify": "^1.11.2"
+    "nodemon": "^2.0.6"
   }
 }
