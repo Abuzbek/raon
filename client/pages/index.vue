@@ -1,5 +1,5 @@
 <template>
-<div> 
+<div>
   <header>
      <swiper ref="mySwiper" :options="swiperOptions">
       <swiper-slide
@@ -13,52 +13,19 @@
     <div class="swiper-pagination swiperPag" slot="pagination"></div>
   </header>
   <v-container class="pt-15">
+    <Dialog v-bind="productPush" v-if="dialog" @dialogFalse="dialogFalse()"/>
     <h1 class="text-center">BEST SELLER</h1>
      <v-row>
     <v-col v-for="n in products" :key="n" cols="6" xl="2" lg="3" md="4">
-      <v-card
-        class="mx-auto"
-      >
-        <v-img
-          v-ripple="{class: 'warning--text'}"
-          class="white--text align-end"
-          height="200px"
-          :src="n.img"
-        >
-        </v-img>
-        <v-card-subtitle class="pb-0">
-          Number 10
-        </v-card-subtitle>
-        <v-card-text class="text--primary pb-2">
-          <div>{{n.name}}</div>
-          <v-row>
-            <v-col class="pt-1 pb-1" v-if="n.sale" cols="12" md="auto">
-              {{n.sale}}
-            </v-col>
-            <v-col class="pt-1 pb-1" cols="12" md="auto">
-              <div :class="{'line': n.sale}">
-                {{n.price}}
-              </div>
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-btn
-            color="warning"
-            @click="pushId(n._id)"
-          >
-            В корзину
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+      <Card  v-bind="n" @cartId="selectId" />
     </v-col>
   </v-row>
   </v-container>
 </div>
 </template>
-
 <script>
+import Card from '../components/card'
+import Dialog from '../components/dialog'
 import SwiperCore , {Pagination, EffectFade} from 'swiper'
 import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.css'
@@ -76,34 +43,45 @@ export default {
         },
         // Some Swiper option/callback...
       },
+      dialog:false,
       products:'',
+      productPush:null,
       clickedId: false
     }
   },
   components: {
     Swiper,
-    SwiperSlide
+    SwiperSlide,
+    Dialog,
+    Card
   },
   directives: {
     swiper: directive
   },
   async asyncData({$axios}){
-    const product = await $axios.$get('http://localhost:8080/api/product')
+    const product = await $axios.$get('http://localhost:8080/api')
     return {product}
   },
   mounted(){
     this.products = this.product
   },
   methods:{
-    pushId(id){
-      if(this.clickedId){
-        this.$axios.$post('http://localhost:8080/api/product/delete', {id: id})
-      }
-      else{
-        this.$axios.$post('http://localhost:8080/api/product', {id: id})
-      }
-      this.clickedId = !this.clickedId
-      $emit()
+    // pushId(id){
+    //   if(this.clickedId){
+    //     this.$axios.$post('http://localhost:8080/api/product/delete', {id: id})
+    //   }
+    //   else{
+    //     this.$axios.$post('http://localhost:8080/api/product', {id: id})
+    //   }
+    //   this.clickedId = !this.clickedId
+    // }
+    selectId(select){
+      console.log(select);
+      this.productPush = select
+      this.dialog = !this.dialog
+    },
+    dialogFalse(select){
+      this.dialog = select
     }
   }
 
@@ -115,6 +93,7 @@ export default {
   width: 100%;
   height: 90vh;
 }
+
 header{
   position: relative;
   padding-bottom: 60px;
@@ -122,6 +101,7 @@ header{
     position: absolute;
     bottom: 10px;
     width: 100%;
+    z-index:1 !important;
     .swiper-pagination-bullet{
       margin: 0px 5px;
       width: 10px;
@@ -143,9 +123,5 @@ header{
       
     }
   }
-}
-.line{
-  color: gray;
-  text-decoration: line-through;
 }
 </style>

@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const lessMiddleware = require('less-middleware');
 const logger = require('morgan');
 const cors = require('cors')
+const mongoose = require('mongoose')
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -14,6 +15,24 @@ const app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+//==============mongose conection ==============
+const dbJson = require('./helper/db')
+
+mongoose.connect(dbJson.db, { 
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true, 
+});
+
+const db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'connection error:'));
+
+db.once('open', function () {
+  console.log('mongoDbga online ulandik');
+});
+//==============mongose conection ==============
 
 app.use(cors())
 app.use(logger('dev'));
